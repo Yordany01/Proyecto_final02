@@ -1,0 +1,16 @@
+/* Puedes agregar esto en tu archivo CSS principal */
+/* filepath: c:\xampp\htdocs\template2\css\estilos.css */
+
+@media (max-width: 600px) {
+  .buscador-input {
+    width: 70vw;         /* Ajusta el ancho según lo que ves en la imagen */
+    height: 40px;        /* Altura similar a la imagen */
+    font-size: 1.1em;    /* Tamaño de texto adecuado */
+    border-radius: 10px; /* Bordes redondeados */
+    padding: 0 15px;     /* Espaciado interno */
+    border: 2px solid #ccc;
+    box-sizing: border-box;
+    margin: 0 10px;
+    background: #f5f5f5;
+  }
+}

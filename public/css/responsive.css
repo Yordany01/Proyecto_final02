@@ -1,0 +1,143 @@
+/* ZOE COSTA - Ajustes responsive globales */
+
+/* Base */
+html, body { -webkit-text-size-adjust: 100%; height: 100%; }
+
+/* Sidebar móvil y backdrop (coherente con custom.js) */
+@media (max-width: 991.98px) {
+   #sidebar { z-index: 3000 !important; }
+  .sidebar-backdrop { z-index: 2990 !important; }
+  /* Use dynamic viewport to handle iOS URL bar */
+  #sidebar {
+    position: fixed; left: -260px; top: 0; bottom: 0; width: 260px; z-index: 3000;
+    transition: left .3s ease; background: #fff;
+    /* Multi-viewport fallbacks for iOS/Android */
+    height: 100vh;
+    height: 100svh;
+    height: 100dvh;
+    box-shadow: 2px 0 16px rgba(0,0,0,.12);
+    overflow: hidden;
+  }
+  /* White full-height layer to eliminate any bottom bleed on iOS (only when open) */
+  body.sidebar-open #sidebar::before {
+    content: "";
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 260px;
+    background: #fff;
+    z-index: -1; /* behind sidebar content, still above page */
+    pointer-events: none;
+  }
+  body.sidebar-open #sidebar { left: 0; }
+  .sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 2990; }
+  body.sidebar-open .sidebar-backdrop { display: block; }
+  body.sidebar-open { overflow: hidden; }
+  /* Additionally freeze main wrapper to fully prevent background scroll/jitter */
+  body.sidebar-open .page-wrapper { position: fixed; width: 100%; inset: 0; height: 100dvh; overflow: hidden; }
+  body.sidebar-open .main-container { position: fixed; width: 100%; inset: 0; height: 100dvh; overflow: hidden; }
+  .sidebar-wrapper { min-height: 100%; display: flex; flex-direction: column; }
+  .app-header { padding-left: 0 !important; }
+  .app-container { padding-left: 0 !important; }
+
+  /* Scroll independiente del menú y respeto a área segura iOS */
+  #sidebar .sidebarMenuScroll { max-height: calc(100dvh - 96px); overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: calc(env(safe-area-inset-bottom, 0) + 24px); }
+  #sidebar .app-brand { padding-top: calc(env(safe-area-inset-top, 0) + 12px); background: #fff; }
+  /* Safety layer at the bottom to avoid see-through over the safe-area */
+  #sidebar::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: env(safe-area-inset-bottom, 0); background: #fff; }
+}
+
+/* Barra de búsqueda sticky */
+.search-container { box-shadow: none; background: transparent; }
+#searchContainer { position: sticky; top: 0; z-index: 1000; }
+#searchContainer.hide-search { top: -72px; }
+#searchContainer .card-body { padding: 6px 8px; display: flex; align-items: center; justify-content: center; background: transparent; }
+#searchContainer .form-control {
+  height: 34px;
+  border-radius: 12px;
+  -webkit-appearance: none; appearance: none;
+  width: 100%;            /* ocupa ancho disponible */
+  max-width: 90vw;        /* evita desbordes en pantallas muy pequeñas */
+}
+
+@media (min-width: 768px) {
+  #searchContainer .form-control { height: 36px; }
+}
+
+/* Centrar barra de búsqueda en escritorio y ajustar espacios */
+@media (min-width: 992px) {
+  .app-header .row.w-100 { display: flex !important; justify-content: center !important; margin: 0 !important; }
+  .app-header .row.w-100 > .col-12 { display: flex; justify-content: center; }
+  .app-header #searchContainer { display: flex; justify-content: center; width: 100%; max-width: 860px; }
+  #searchContainer .form-control { max-width: 520px; }
+  .app-header { padding-top: 8px; padding-bottom: 6px; }
+  .app-header + .app-hero-header { margin-top: 6px; }
+  /* elimina espacio blanco extra bajo header */
+  .app-hero-header { padding-top: 10px; padding-bottom: 8px; }
+}
+
+/* Ajuste específico para móviles: hacerlo un poco más grande y más ancho */
+@media (max-width: 576px) {
+  #searchContainer .form-control { max-width: 98vw; height: 40px; }
+  /* acercar el buscador a la fila del menú y reducir espacios laterales */
+  .app-header .row.w-100 { margin-top: 4px !important; padding: 0 8px !important; }
+}
+
+/* Hero y cabeceras en móvil */
+@media (max-width: 576px) {
+  .app-hero-header { margin: 10px 8px; padding: 12px 14px; }
+  .card-header.d-flex, .card-header.d-flex.align-items-center { flex-direction: column; align-items: flex-start !important; gap: .5rem; }
+}
+
+/* KPIs y tipografías */
+.display-3 { font-size: 2.2rem; line-height: 1.1; }
+@media (max-width: 576px) {
+  .display-3 { font-size: 1.8rem; }
+  .card-header h5 { font-size: 0.95rem; }
+}
+
+/* Botones accesibles en móvil */
+.btn { min-height: 40px; }
+.btn-sm { min-height: 34px; }
+
+/* Tablas en móvil */
+.table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+@media (max-width: 576px) {
+  table th, table td { white-space: nowrap; padding: .5rem .75rem; }
+  table { font-size: 0.92rem; }
+}
+
+/* Badges y etiquetas más compactas */
+.badge { font-size: .75rem; }
+
+/* Formularios (mejor foco y separación) */
+.form-control:focus { box-shadow: 0 0 0 0.2rem rgba(74,108,247,.15); }
+
+/* Login */
+@media (max-width: 576px) {
+  .auth-box { padding: 1.25rem; }
+  .auth-logo img { max-width: 90px; }
+}
+
+/* Tarjetas y separaciones generales */
+.card { border-radius: 12px; }
+.card .card-body { padding: 14px; }
+@media (max-width: 576px) {
+  .card .card-body { padding: 12px; }
+  .quick-actions .btn { padding: .8rem .9rem; }
+}
+
+/* Centrar y espaciar acciones rápidas en Dashboard */
+.row.quick-actions { justify-content: center; gap: 12px 24px; margin-bottom: 1rem !important; }
+.row.quick-actions > [class^="col-"],
+.row.quick-actions > [class*=" col-"] { display: flex; justify-content: center; }
+.quick-actions .btn { max-width: 340px; width: 100%; margin: 0 auto; }
+
+@media (min-width: 768px) {
+  .row.quick-actions { gap: 16px 32px; }
+}
+
+/* Inputs / botones en iOS */
+input, select, textarea, button { -webkit-tap-highlight-color: rgba(0,0,0,0); }
+input[type="search"], input[type="text"], input[type="email"], input[type="password"] { -webkit-appearance: none; appearance: none; }

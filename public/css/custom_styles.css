@@ -1,0 +1,137 @@
+/* --- custom_styles.css --- */
+
+/* 1. Global Design & Typography */
+:root {
+  --primary-color: #4f46e5;
+  --secondary-color: #6f42c1;
+  --light-gray: #f8fafc;
+  --medium-gray: #e2e8f0;
+  --dark-gray: #334155;
+  --text-color: #475569;
+  --body-bg: #f1f5f9;
+  --card-bg: #ffffff;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  background-color: var(--body-bg);
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif; /* Using a modern font, requires import */
+}
+
+/* 2. Layout & Main Components */
+.app-container {
+  transition: all 0.3s ease;
+}
+
+.app-header {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--medium-gray);
+  box-shadow: var(--shadow);
+}
+
+.app-sidebar {
+  background: #1e293b; /* Dark sidebar for contrast */
+  border-right: none;
+}
+
+.sidebar-menu li a {
+  color: #cbd5e1;
+  transition: all 0.2s ease;
+}
+
+.sidebar-menu li a:hover, .sidebar-menu li.active a {
+  background: var(--primary-color);
+  color: #ffffff;
+}
+
+/* 3. Card & Panel Styling */
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  background-color: var(--card-bg);
+  border-bottom: 1px solid var(--medium-gray);
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+/* 4. Button & Form Elements */
+.btn-primary {
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #4338ca;
+  transform: translateY(-1px);
+}
+
+.form-control {
+  border-radius: 8px;
+  border: 1px solid var(--medium-gray);
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+/* 5. Table Styling */
+.table {
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+.table thead th {
+  border: none;
+  color: var(--dark-gray);
+  font-weight: 600;
+}
+
+.table tbody tr {
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+  border-radius: 10px;
+}
+
+.table tbody td {
+  border: none;
+  vertical-align: middle;
+}
+
+/* 6. Responsive Adjustments */
+@media (max-width: 768px) {
+  .table thead {
+    display: none; /* Hide table headers on mobile */
+  }
+  .table tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+  }
+  .table tbody td {
+    display: block;
+    text-align: right;
+    border-bottom: 1px solid var(--medium-gray);
+  }
+  .table tbody td:before {
+    content: attr(data-label);
+    float: left;
+    font-weight: 600;
+  }
+  .table tbody td:last-child {
+    border-bottom: none;
+  }
+}
