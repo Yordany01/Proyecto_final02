@@ -25,8 +25,18 @@ class LoginFilter implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        // Evitar bucle de redirección: si ya estamos en la página de login, no hacer nada.
-        if (service('uri')->getPath() === 'login') {
+        $path = trim(service('uri')->getPath(), '/');
+        // Permitir páginas de autenticación y recursos públicos sin sesión
+        $whitelist = [
+            'login',
+            'login/login',
+            'logout',
+        ];
+        // Permitir assets públicos
+        if (str_starts_with($path, 'public/')) {
+            return;
+        }
+        if (in_array($path, $whitelist, true)) {
             return;
         }
 

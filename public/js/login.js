@@ -33,7 +33,7 @@ function loguear() {
     //     borrarCookie('recordarMarcado');
     // }
 
-    var parametros = $.param({ clave: clave, usuario: usuario });
+    var parametros = $.param({ password: clave, usuario: usuario });
     const url = BASE_URL + 'login/login';
 
     $.ajax({

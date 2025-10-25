@@ -3,6 +3,7 @@ const usuariosBaseUrl = typeof baseURL !== 'undefined' ? baseURL : (window.locat
 
 $(document).ready(function () {
   if (!document.getElementById('usuariosTable')) return;
+  try { console.log('[usuarios] script iniciado. baseURL=', usuariosBaseUrl); } catch(_){}
   inicializarDataTableUsuarios();
   cargarKpisUsuarios();
   document.getElementById('saveUserBtn')?.addEventListener('click', guardarUsuario);
@@ -33,7 +34,31 @@ function inicializarDataTableUsuarios() {
     ajax: {
       method: 'GET',
       url: usuariosBaseUrl + 'usuarios/listar',
-      dataSrc: 'data'
+      dataSrc: function (json) {
+        try { console.log('[usuarios] listar URL:', usuariosBaseUrl + 'usuarios/listar'); } catch(_){}
+        try { console.log('[usuarios] listar resp:', json); } catch(_){}
+        try {
+          if (json && Array.isArray(json.data)) return json.data;
+          if (json && json.success === false) {
+            notify('error', json.error || 'Error al cargar usuarios');
+            return [];
+          }
+        } catch (e) {}
+        // Respuesta no válida
+        notify('error', 'Respuesta inválida del servidor al listar usuarios');
+        return [];
+      },
+      error: function (xhr) {
+        try { console.error('[usuarios] listar error:', xhr?.status, xhr?.responseText); } catch(_){}
+        let msg = 'No se pudo cargar el listado de usuarios';
+        if (xhr && xhr.responseText) {
+          try {
+            const j = JSON.parse(xhr.responseText);
+            if (j && j.error) msg = j.error;
+          } catch (_) {}
+        }
+        notify('error', msg);
+      }
     },
     columns: [
       { data: null, render: (data, type, row) => pickField(row, ['nombre','nombres','usuario','name']) || '-' },
@@ -60,6 +85,9 @@ function inicializarDataTableUsuarios() {
     ],
   });
   tablaUsuarios.on('draw', syncKpisUsuariosDesdeTabla);
+  tablaUsuarios.on('draw', function(){
+    try { console.log('[usuarios] draw rows=', tablaUsuarios.rows().count()); } catch(_){}
+  });
   $('#usuariosTable').on('error.dt', function (e, settings, techNote, message) {
     notify('error', 'No se pudo cargar el listado de usuarios.');
   });
@@ -110,6 +138,7 @@ function guardarUsuario() {
   const pass2 = document.getElementById('userConfirmPassword').value;
   const rol = document.getElementById('userRole').value;
   const estado = document.getElementById('userStatus').value;
+  const telefono = (document.getElementById('userPhone')?.value || '').trim();
   if (!email || !rol || !estado || (!id && !pass)) { notify('warning','Complete los campos obligatorios'); return; }
   if (!id && pass.length < 8) { notify('warning','La contraseña debe tener al menos 8 caracteres'); return; }
   if (pass || pass2) { if (pass !== pass2) { document.getElementById('passwordError').classList.remove('d-none'); return; } }
@@ -119,6 +148,7 @@ function guardarUsuario() {
   if (pass) fd.append('password', pass);
   fd.append('rol', rol);
   fd.append('estado', estado);
+  if (telefono) fd.append('telefono', telefono);
   fetch(usuariosBaseUrl + (id ? 'usuarios/actualizar' : 'usuarios/insertar'), { method: 'POST', body: fd })
     .then(r => r.json())
     .then(resp => {
@@ -145,6 +175,7 @@ function editarUsuario(id) {
       document.getElementById('userConfirmPassword').value = '';
       document.getElementById('userRole').value = u.rol || '';
       document.getElementById('userStatus').value = u.estado || 'Activo';
+      const up = document.getElementById('userPhone'); if (up) up.value = u.telefono || '';
       document.getElementById('userModalLabel').textContent = 'Editar Usuario';
       new bootstrap.Modal(document.getElementById('userModal')).show();
     })

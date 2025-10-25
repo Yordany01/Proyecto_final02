@@ -9,14 +9,18 @@ use App\Models\UsuarioModel;
 class LogeoController extends BaseController
 {
     public function login()
-    { 
+    {
         $usuarioModel = new UsuarioModel();
         $session = session();
 
+        // CORREGIDO: El formulario envía 'usuario' y 'password', no 'clave'
         $email = $this->request->getPost('usuario');
-        $password = $this->request->getPost('clave');
+        $password = $this->request->getPost('password'); // Cambiado de 'clave' a 'password'
 
-        // Llama al nuevo método del modelo para verificar las credenciales
+        // Log para debugging
+        log_message('info', 'Intento de login - Email: ' . $email);
+
+        // Llama al método del modelo para verificar las credenciales
         $user = $usuarioModel->getUserByCredentials($email, $password);
 
         if ($user) {
@@ -29,10 +33,18 @@ class LogeoController extends BaseController
                 'is_logged' => true,
             ];
             $session->set($sessionData);
+            
+            log_message('info', 'Login exitoso - Usuario: ' . $user['email']);
+            
             return $this->response->setJSON(['success' => true]);
         } else {
-            // Si el usuario no es válido (no existe, está inactivo o la contraseña es incorrecta)
-            return $this->response->setJSON(['success' => false, 'message' => 'Usuario o contraseña incorrectos.']);
+            log_message('warning', 'Login fallido - Email: ' . $email);
+            
+            // Si el usuario no es válido
+            return $this->response->setJSON([
+                'success' => false, 
+                'message' => 'Usuario o contraseña incorrectos.'
+            ]);
         }
     }
 
@@ -40,5 +52,11 @@ class LogeoController extends BaseController
     {
         session()->destroy();
         return redirect()->to('/login');
+    }
+
+    // Método auxiliar para generar hash (para desarrollo)
+    public function hashPassword($password)
+    {
+        return password_hash($password, PASSWORD_BCRYPT);
     }
 }
