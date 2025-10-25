@@ -29,9 +29,9 @@ function actualizarKpisDesdeTabla_Simple() {
     let total = 0, completadas = 0, pendientes = 0;
     rows.forEach(tr => {
         const tds = tr.querySelectorAll('td');
-        if (tds.length < 6) return;
+        if (tds.length < 7) return; // ahora hay 7 columnas
         total += 1;
-        const estadoText = (tds[4]?.textContent || '').trim().toLowerCase();
+        const estadoText = (tds[5]?.textContent || '').trim().toLowerCase();
         if (estadoText.includes('completada')) completadas += 1;
         else if (estadoText.includes('pendiente')) pendientes += 1;
     });
@@ -109,6 +109,7 @@ function cargarTareas() {
                     tr.innerHTML = `
                         <td>${tarea.titulo}</td>
                         <td>${tarea.asignado_a}</td>
+                        <td>${tarea.telefono || ''}</td>
                         <td>${formatearFecha(tarea.fecha_limite)}</td>
                         <td>${prioridadBadge}</td>
                         <td>${estadoBadge}</td>
@@ -122,7 +123,7 @@ function cargarTareas() {
                             <button class="btn btn-sm btn-danger" onclick="eliminarTarea(${tarea.id})">
                                 <i class="bi bi-trash"></i>
                             </button>
-                            <button class="btn btn-sm btn-success" onclick="abrirModalWhatsApp('${tarea.asignado_a}', '${tarea.asignado_a}')" title="WhatsApp">
+                            <button class="btn btn-sm btn-success" onclick="abrirModalWhatsApp('${tarea.asignado_a.replace(/'/g, "\\'")}', '${(tarea.telefono||'').toString().replace(/'/g, "\\'")}')" title="WhatsApp">
                             <i class="bi bi-whatsapp"></i>
                             </button>
                         </td>
@@ -130,7 +131,7 @@ function cargarTareas() {
                     tbody.appendChild(tr);
                 });
             } else {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center">No hay tareas registradas</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">No hay tareas registradas</td></tr>';
             }
 
             cargarKPIs();
@@ -149,15 +150,17 @@ function guardarTarea() {
     // Validación mínima
     const titulo = document.getElementById('titulo').value.trim();
     const asignado = document.getElementById('asignado_a').value.trim();
+    const telefono = (document.getElementById('telefono_asignado')?.value || '').trim();
     const fecha = document.getElementById('fecha_limite').value;
     const prioridad = document.getElementById('prioridad').value;
     const estado = document.getElementById('estado').value;
-    if (!titulo || !asignado || !fecha || !prioridad || !estado) {
+    if (!titulo || !asignado || !telefono || !fecha || !prioridad || !estado) {
         mostrarAlerta('Complete los campos requeridos', 'error');
         return;
     }
 
     const formData = new FormData(form);
+    if (telefono) formData.set('telefono', telefono);
 
     let url = tareasBaseUrl + 'tareas/insertar';
     
@@ -250,6 +253,7 @@ function editarTarea(id) {
                 document.getElementById('fecha_limite').value = tarea.fecha_limite;
                 document.getElementById('prioridad').value = tarea.prioridad;
                 document.getElementById('estado').value = tarea.estado;
+                const tel = document.getElementById('telefono_asignado'); if (tel) tel.value = tarea.telefono || '';
                 
                 document.querySelector('#nuevaTareaModal .modal-title').textContent = 'Editar Tarea';
                 document.querySelector('#nuevaTareaModal button[type="submit"]').textContent = 'Actualizar Tarea';
@@ -282,7 +286,8 @@ async function eliminarTarea(id) {
             });
             return res.isConfirmed;
         }
-        return confirm('¿Está seguro de eliminar esta tarea?');
+        // Evitar confirm nativo; en ausencia de Swal, cancelar
+        return false;
     })();
 
     if (!confirmado) return;
@@ -312,9 +317,9 @@ async function eliminarTarea(id) {
     });
 }
 // Abrir modal de WhatsApp
-function abrirModalWhatsApp(nombreDestinatario, tituloTarea) {
+function abrirModalWhatsApp(nombreDestinatario, telefono) {
     document.getElementById('whatsapp_nombre').value = nombreDestinatario;
-    document.getElementById('whatsapp_telefono').value = '';
+    document.getElementById('whatsapp_telefono').value = telefono || '';
     
     const modal = new bootstrap.Modal(document.getElementById('whatsappModal'));
     modal.show();
@@ -395,7 +400,7 @@ function formatearFecha(fecha) {
     return new Date(fecha + 'T00:00:00').toLocaleDateString('es-PE', opciones);
 }
 
-// Función para mostrar alertas
+// Función para mostrar alertas (SweetAlert2) sin alert nativo
 function mostrarAlerta(mensaje, tipo) {
     const texto = mensaje || (tipo === 'success' ? 'Operación realizada correctamente' : 'Ocurrió un error');
     if (window.Swal && Swal.fire) {
@@ -405,12 +410,8 @@ function mostrarAlerta(mensaje, tipo) {
             text: texto,
             confirmButtonText: 'OK'
         });
-        return;
-    }
-    if (tipo === 'success') {
-        alert('✓ ' + texto);
     } else {
-        alert('✗ ' + texto);
+        console.log(`[${(tipo||'info').toUpperCase()}] ${texto}`);
     }
 }
 
@@ -423,17 +424,3 @@ document.getElementById('nuevaTareaModal').addEventListener('hidden.bs.modal', f
 });
 
 // Función auxiliar para formatear fechas
-function formatearFecha(fecha) {
-    const opciones = { year: 'numeric', month: '2-digit', day: '2-digit' };
-    return new Date(fecha + 'T00:00:00').toLocaleDateString('es-PE', opciones);
-}
-
-// Función para mostrar alertas
-function mostrarAlerta(mensaje, tipo) {
-    const texto = mensaje || (tipo === 'success' ? 'Operación realizada correctamente' : 'Ocurrió un error');
-    if (tipo === 'success') {
-        alert('✓ ' + texto);
-    } else {
-        alert('✗ ' + texto);
-    }
-}

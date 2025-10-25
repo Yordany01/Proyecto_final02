@@ -193,7 +193,7 @@ function llenarEmpresa() {
                 // Llenar almacén basado en la primera sucursal
                 llenarSucursal(empresaSelect.val());
             } else {
-                alert('No hay empresas');
+                if (window.Swal) Swal.fire('Información','No hay empresas','info'); else console.info('No hay empresas');
             }
         },
         error: function (jqXHR, textStatus) {
@@ -222,7 +222,7 @@ function llenarSucursal() {
                 // Llenar almacén basado en la primera sucursal
                 llenarAlmacen(sucursalSelect.val());
             } else {
-                alert('No hay sucursales');
+                if (window.Swal) Swal.fire('Información','No hay sucursales','info'); else console.info('No hay sucursales');
             }
         },
         error: function (jqXHR, textStatus) {
@@ -250,7 +250,7 @@ function llenarAlmacen(sucursal) {
                     );
                 });
             } else {
-                alert('No hay almacenes');
+                if (window.Swal) Swal.fire('Información','No hay almacenes','info'); else console.info('No hay almacenes');
             }
         },
         error: function (jqXHR, textStatus) {

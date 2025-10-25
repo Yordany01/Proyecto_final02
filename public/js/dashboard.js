@@ -10,7 +10,7 @@ function setText(id, val) {
 
 function showError(title, msg) {
   if (typeof Swal !== 'undefined') Swal.fire({ icon:'error', title: title || 'Error', text: msg || 'Ha ocurrido un error.' });
-  else alert(`${title||'Error'}: ${msg||''}`);
+  else console.error(`${title||'Error'}: ${msg||''}`);
 }
 
 function qs() {
@@ -111,7 +111,7 @@ function validarRango() {
   const ok = !isNaN(a) && !isNaN(b) && a.getTime() <= b.getTime();
   if (!ok) {
     const msg = 'El rango de fechas es inválido. "Desde" debe ser menor o igual que "Hasta".';
-    if (typeof Swal !== 'undefined') Swal.fire({ icon:'warning', title:'Rango inválido', text: msg }); else alert(msg);
+    if (typeof Swal !== 'undefined') Swal.fire({ icon:'warning', title:'Rango inválido', text: msg }); else console.warn(msg);
   }
   return ok;
 }

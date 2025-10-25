@@ -89,6 +89,7 @@
                           <th>Nombre</th>
                           <th>Estado</th>
                           <th>Email</th>
+                          <th>Teléfono</th>
                           <th>Acciones</th> 
                         </tr>
                       </thead>
@@ -117,6 +118,10 @@
             <div class="mb-3">
               <label class="form-label">Email <span class="text-danger">*</span></label>
               <input type="email" class="form-control" id="userEmail" placeholder="usuario@ejemplo.com" required autocomplete="username">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Teléfono</label>
+              <input type="text" class="form-control" id="userPhone" placeholder="+51">
             </div>
             <div class="mb-3 password-container">
               <label class="form-label">Contraseña <span class="text-danger">*</span></label>

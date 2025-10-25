@@ -98,7 +98,8 @@
     const nombre = getVal('adminFirstName').trim();
     const email = getVal('adminEmail').trim();
     if (!nombre || !email) {
-      alert('Nombre y Email son obligatorios');
+      if (window.Swal) Swal.fire('Atención','Nombre y Email son obligatorios','warning');
+      else console.warn('Nombre y Email son obligatorios');
       return;
     }
 
@@ -200,14 +201,14 @@
     if (window.Swal) {
       Swal.fire('Éxito', msg, 'success');
     } else {
-      alert(msg);
+      console.log('OK:', msg);
     }
   }
   function mostrarError(msg) {
     if (window.Swal) {
       Swal.fire('Error', msg, 'error');
     } else {
-      alert(msg);
+      console.error('Error:', msg);
     }
   }
 })();

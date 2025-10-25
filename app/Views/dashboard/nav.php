@@ -33,17 +33,6 @@
                 <img src="<?= base_url('public/img/file.png') ?>" class="rounded-4 img-3x" alt="Usuario ZOE COSTA" loading="lazy" />
                 <span class="ms-2 text-truncate d-lg-block d-none">Administrador</span>
               </a>
-              <div class="dropdown-menu dropdown-menu-end shadow-lg">
-                <a class="dropdown-item d-flex align-items-center" href="perfil.php">
-                  <i class="bi bi-person fs-4 me-2"></i>Mi Perfil
-                </a>
-                <a class="dropdown-item d-flex align-items-center" href="ajuste.php">
-                  <i class="bi bi-gear fs-4 me-2"></i>Ajustes
-                </a>
-                <a class="dropdown-item d-flex align-items-center" href="login.php">
-                  <i class="bi bi-box-arrow-right fs-4 me-2"></i>Cerrar Sesión
-                </a>
-              </div>
             </div>
           </div>
         </div>

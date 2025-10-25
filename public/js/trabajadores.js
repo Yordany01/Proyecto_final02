@@ -465,7 +465,9 @@ async function confirmarAccion(titulo, texto) {
         });
         return result.isConfirmed;
     }
-    return confirm(titulo + '\n' + texto);
+    // Evitar confirm nativo si no hay SweetAlert2
+    console.warn('Confirmación requerida:', titulo, texto);
+    return false;
 }
 
 // Mostrar mensaje de éxito
@@ -478,7 +480,7 @@ function mostrarExito(mensaje) {
             confirmButtonText: 'OK'
         });
     } else {
-        alert(mensaje || 'Operación realizada correctamente');
+        console.log('OK:', mensaje || 'Operación realizada correctamente');
     }
 }
 
@@ -492,6 +494,6 @@ function mostrarError(mensaje) {
             confirmButtonText: 'OK'
         });
     } else {
-        alert(mensaje || 'Ha ocurrido un error');
+        console.error('Error:', mensaje || 'Ha ocurrido un error');
     }
 }

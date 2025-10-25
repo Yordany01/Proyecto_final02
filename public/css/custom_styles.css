@@ -11,6 +11,9 @@
   --body-bg: #f1f5f9;
   --card-bg: #ffffff;
   --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --danger: #ef4444;
 }
 
 body {
@@ -18,6 +21,101 @@ body {
   color: var(--text-color);
   font-family: 'Inter', sans-serif; /* Using a modern font, requires import */
 }
+
+/* Global animations */
+.fade-in { animation: fadeIn .35s ease both; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: translateY(0);} }
+
+/* App hero header */
+.app-hero-header { background: linear-gradient(180deg, #fff, #f7f8fc); border: 1px solid #eef1f6; border-radius: 14px; padding: 18px; box-shadow: var(--shadow); }
+.app-hero-header .icon-box { box-shadow: 0 8px 24px rgba(79,70,229,.18); }
+
+/* Cards variants */
+.card { border: 0; box-shadow: var(--shadow); border-radius: 14px; overflow: hidden; }
+.card .card-header { border: 0; padding: 14px 18px; }
+.card-info .card-header { background: linear-gradient(135deg,#3b82f6,#60a5fa); }
+.card-success .card-header { background: linear-gradient(135deg,#16a34a,#22c55e); }
+.card-warning .card-header { background: linear-gradient(135deg,#f59e0b,#fbbf24); }
+.card-danger .card-header { background: linear-gradient(135deg,#ef4444,#f87171); }
+.card-dark .card-header { background: linear-gradient(135deg,#111827,#374151); }
+.card .card-title { color: #fff; margin: 0; font-weight: 600; }
+
+/* Buttons */
+.btn { border-radius: 10px; transition: transform .12s ease, box-shadow .2s ease; }
+.btn:hover { transform: translateY(-1px); }
+.btn-primary { background: var(--primary-color); border: none; box-shadow: 0 8px 22px rgba(79,70,229,.25); }
+.btn-primary:hover { background: #4338ca; }
+.btn-success { background: var(--success); border: none; }
+.btn-success:hover { background: #15803d; }
+.btn-warning { color: #111827; }
+.btn-danger { background: var(--danger); border: none; }
+
+/* Inputs */
+.form-control { border-radius: 10px; border-color: var(--medium-gray); }
+.form-control:focus { border-color: var(--primary-color); box-shadow: 0 0 0 .2rem rgba(79,70,229,.15); }
+.form-label { font-weight: 600; color: #374151; }
+
+/* Tables & DataTables */
+.table { --bs-table-striped-bg: #f9fafb; border-color: #eef1f6; }
+.table > :not(caption) > * > * { padding: .85rem .8rem; }
+.dataTables_wrapper .dataTables_length select { border-radius: 8px; }
+.dataTables_wrapper .dataTables_filter input { border-radius: 8px; }
+.dataTables_wrapper .dataTables_paginate .paginate_button { border-radius: 8px; padding: .3rem .6rem; }
+.dataTables_wrapper .dataTables_paginate .paginate_button.current { background: var(--primary-color) !important; color: #fff !important; border: none; }
+
+/* KPI big numbers */
+#kpi-total, #kpi-activos, #kpi-inactivos, #kpi-restringidos { letter-spacing: -1px; }
+
+/* Modals */
+.modal-content { border: 0; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,.18); }
+.modal-header { border: 0; }
+.modal-header.bg-success { background: linear-gradient(135deg,#16a34a,#22c55e)!important; }
+
+/* Alerts (Bootstrap) */
+.alert { border: 0; border-radius: 12px; box-shadow: var(--shadow); }
+.alert-success { background: #ecfdf5; color: #065f46; }
+.alert-danger { background: #fef2f2; color: #991b1b; }
+.alert-warning { background: #fffbeb; color: #92400e; }
+
+/* SweetAlert2 theming (si está cargado) */
+.swal2-popup { border-radius: 16px !important; box-shadow: 0 18px 56px rgba(0,0,0,.22) !important; }
+.swal2-title { font-weight: 700 !important; color: #111827 !important; }
+.swal2-styled.swal2-confirm { background: var(--primary-color) !important; border-radius: 12px !important; box-shadow: 0 6px 18px rgba(79,70,229,.28) !important; }
+.swal2-styled.swal2-cancel { background: #64748b !important; border-radius: 12px !important; }
+.swal2-icon-success { border-color: #22c55e !important; color: #22c55e !important; }
+.swal2-icon-warning { border-color: #f59e0b !important; color: #f59e0b !important; }
+.swal2-icon-error { border-color: #ef4444 !important; color: #ef4444 !important; }
+
+/* Sidebar active item harmonize */
+.sidebar .active > a, .nav .active > a { background: rgba(79,70,229,.1); color: var(--primary-color); border-radius: 10px; }
+
+/* Section specific tweaks without touching HTML */
+/* Ajustes */
+.card.card-light { border: 0; box-shadow: 0 8px 24px rgba(0,0,0,.06); border-radius: 14px; }
+.card.card-light .card-header { background: #f3f4f6; border: 0; border-top-left-radius: 14px; border-top-right-radius: 14px; padding: 14px 18px; }
+.card.card-light .card-title { color: #111827; font-weight: 600; margin: 0; }
+/* Asegurar contraste en enlaces/pestañas dentro del header */
+.card.card-light .card-header, 
+.card.card-light .card-header a, 
+.card.card-light .card-header .nav-link { color: #111827 !important; }
+.card.card-light .card-header .nav-link.active { background: #ffffff; color: #111827 !important; border: 1px solid #e5e7eb; }
+
+/* Chat Admin */
+#chatMensajes { background: var(--light-gray); border: 1px solid var(--medium-gray); border-radius: 14px; padding: 10px; scrollbar-width: thin; }
+#chatMensajes::-webkit-scrollbar { height: 8px; width: 8px; }
+#chatMensajes::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+#chatMensajes > .text-start, #chatMensajes > .text-end { display: inline-block; max-width: 82%; margin: 6px 0; padding: 8px 12px; border-radius: 14px; line-height: 1.25; box-shadow: var(--shadow); }
+#chatMensajes > .text-start { background: #ffffff; color: #111827; border-bottom-left-radius: 6px; }
+#chatMensajes > .text-end { background: var(--primary-color); color: #ffffff; border-bottom-right-radius: 6px; }
+#chatMensajes img { max-width: 100%; height: auto; border-radius: 10px; display: block; margin-top: 4px; }
+#chatMensajes audio { width: 100%; display: block; margin-top: 4px; border-radius: 8px; }
+
+/* Usuarios, Tareas Admin, Documentos, Perfil */
+.bg-light { background-color: #f7f8fc !important; }
+.rounded-2 { border-radius: 12px !important; }
+.rounded-3 { border-radius: 16px !important; }
+.shadow-soft { box-shadow: var(--shadow); }
+
 
 /* 2. Layout & Main Components */
 .app-container {

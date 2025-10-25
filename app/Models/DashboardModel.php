@@ -20,19 +20,31 @@ class DashboardModel extends Model
 
         // Usamos la tabla 'tareas' como proxy de proyectos
         if ($db->tableExists('tareas')) {
-            $builder = $db->table('tareas');
-            if (!empty($filters['from'])) {
-                $builder->where('fecha_limite >=', $filters['from']);
-            }
-            if (!empty($filters['to'])) {
-                $builder->where('fecha_limite <=', $filters['to']);
-            }
-            if (!empty($filters['asignado'])) {
-                $builder->where('asignado_a', $filters['asignado']);
-            }
-            $kpis['total_tareas'] = $builder->countAllResults(false);
-            $kpis['pendientes'] = $builder->where('estado', 'pendiente')->countAllResults(false);
-            $kpis['completados'] = $builder->where('estado', 'completada')->countAllResults();
+            // Total
+            $bTotal = $db->table('tareas');
+            if (!empty($filters['from'])) $bTotal->where('fecha_limite >=', $filters['from']);
+            if (!empty($filters['to'])) $bTotal->where('fecha_limite <=', $filters['to']);
+            if (!empty($filters['asignado'])) $bTotal->where('asignado_a', $filters['asignado']);
+            $kpis['total_tareas'] = $bTotal->countAllResults();
+
+            // Pendientes (case-insensitive)
+            $bPend = $db->table('tareas');
+            if (!empty($filters['from'])) $bPend->where('fecha_limite >=', $filters['from']);
+            if (!empty($filters['to'])) $bPend->where('fecha_limite <=', $filters['to']);
+            if (!empty($filters['asignado'])) $bPend->where('asignado_a', $filters['asignado']);
+            $bPend->where('UPPER(estado)', 'PENDIENTE');
+            $kpis['pendientes'] = $bPend->countAllResults();
+
+            // Completados (case-insensitive, admite COMPLETADA/COMPLETADO)
+            $bComp = $db->table('tareas');
+            if (!empty($filters['from'])) $bComp->where('fecha_limite >=', $filters['from']);
+            if (!empty($filters['to'])) $bComp->where('fecha_limite <=', $filters['to']);
+            if (!empty($filters['asignado'])) $bComp->where('asignado_a', $filters['asignado']);
+            $bComp->groupStart()
+                 ->where('UPPER(estado)', 'COMPLETADA')
+                 ->orWhere('UPPER(estado)', 'COMPLETADO')
+                 ->groupEnd();
+            $kpis['completados'] = $bComp->countAllResults();
         }
 
         if ($db->tableExists('trabajadores')) {

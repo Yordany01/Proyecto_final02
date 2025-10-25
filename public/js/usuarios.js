@@ -8,7 +8,21 @@ $(document).ready(function () {
   document.getElementById('saveUserBtn')?.addEventListener('click', guardarUsuario);
 });
 
+function notify(type, text, title) {
+  if (typeof Swal !== 'undefined') {
+    Swal.fire({
+      icon: type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'error',
+      title: title || (type === 'success' ? 'Éxito' : type === 'warning' ? 'Atención' : 'Error'),
+      text: text || '',
+      confirmButtonText: 'Aceptar'
+    });
+  } else {
+    alert(text || title || '');
+  }
+}
+
 function inicializarDataTableUsuarios() {
+  if ($.fn && $.fn.dataTable) { $.fn.dataTable.ext.errMode = 'none'; }
   tablaUsuarios = $('#usuariosTable').DataTable({
     destroy: true,
     language: { url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json' },
@@ -25,6 +39,7 @@ function inicializarDataTableUsuarios() {
       { data: null, render: (data, type, row) => pickField(row, ['nombre','nombres','usuario','name']) || '-' },
       { data: null, render: (data, type, row) => renderEstadoUsuario(pickField(row, ['estado','user_estado','estatus']) || '') },
       { data: null, render: (data, type, row) => pickField(row, ['email','correo','correo_electronico']) || '-' },
+      { data: null, render: (data, type, row) => pickField(row, ['telefono','celular','phone']) || '-' },
       {
         data: null,
         orderable: false,
@@ -45,6 +60,9 @@ function inicializarDataTableUsuarios() {
     ],
   });
   tablaUsuarios.on('draw', syncKpisUsuariosDesdeTabla);
+  $('#usuariosTable').on('error.dt', function (e, settings, techNote, message) {
+    notify('error', 'No se pudo cargar el listado de usuarios.');
+  });
 }
 
 function renderEstadoUsuario(data) {
@@ -92,8 +110,8 @@ function guardarUsuario() {
   const pass2 = document.getElementById('userConfirmPassword').value;
   const rol = document.getElementById('userRole').value;
   const estado = document.getElementById('userStatus').value;
-  if (!email || !rol || !estado || (!id && !pass)) { alert('Complete los campos obligatorios'); return; }
-  if (!id && pass.length < 8) { alert('La contraseña debe tener al menos 8 caracteres'); return; }
+  if (!email || !rol || !estado || (!id && !pass)) { notify('warning','Complete los campos obligatorios'); return; }
+  if (!id && pass.length < 8) { notify('warning','La contraseña debe tener al menos 8 caracteres'); return; }
   if (pass || pass2) { if (pass !== pass2) { document.getElementById('passwordError').classList.remove('d-none'); return; } }
   const fd = new FormData();
   if (id) fd.append('id', id);
@@ -109,16 +127,17 @@ function guardarUsuario() {
         modal?.hide();
         tablaUsuarios?.ajax?.reload(null, false);
         cargarKpisUsuarios();
-      } else { alert(resp.error || 'No se pudo guardar'); }
+        notify('success','Usuario guardado correctamente');
+      } else { notify('error', resp.error || 'No se pudo guardar'); }
     })
-    .catch(() => alert('Error de red'));
+    .catch(() => notify('error','Error de red'));
 }
 
 function editarUsuario(id) {
   fetch(usuariosBaseUrl + 'usuarios/obtener/' + id)
     .then(r => r.json())
     .then(resp => {
-      if (!resp.success) return alert(resp.error || 'No encontrado');
+      if (!resp.success) return notify('error', resp.error || 'No encontrado');
       const u = resp.data;
       document.getElementById('userId').value = u.id;
       document.getElementById('userEmail').value = u.email || '';
@@ -129,7 +148,7 @@ function editarUsuario(id) {
       document.getElementById('userModalLabel').textContent = 'Editar Usuario';
       new bootstrap.Modal(document.getElementById('userModal')).show();
     })
-    .catch(() => alert('Error al obtener usuario'));
+    .catch(() => notify('error','Error al obtener usuario'));
 }
 
 async function eliminarUsuario(id) {
@@ -142,10 +161,10 @@ async function eliminarUsuario(id) {
   fetch(usuariosBaseUrl + 'usuarios/eliminar', { method: 'POST', body: fd })
     .then(r => r.json())
     .then(resp => {
-      if (resp.success) { tablaUsuarios?.ajax?.reload(null, false); cargarKpisUsuarios(); }
-      else alert(resp.error || 'No se pudo eliminar');
+      if (resp.success) { tablaUsuarios?.ajax?.reload(null, false); cargarKpisUsuarios(); notify('success','Usuario eliminado'); }
+      else notify('error', resp.error || 'No se pudo eliminar');
     })
-    .catch(() => alert('Error eliminando'));
+    .catch(() => notify('error','Error eliminando'));
 }
 
 function abrirModalWhatsAppUsuario(nombre, telefono) {
@@ -158,7 +177,7 @@ async function enviarWhatsAppUsuario() {
   const nombre = document.getElementById('whatsappu_nombre').value.trim();
   const telefono = document.getElementById('whatsappu_telefono').value.trim();
   const mensaje = document.getElementById('whatsappu_mensaje').value.trim();
-  if (!telefono || !mensaje) { alert('Complete teléfono y mensaje'); return; }
+  if (!telefono || !mensaje) { notify('warning','Complete teléfono y mensaje'); return; }
   const params = new URLSearchParams({ nombre, telefono, mensaje });
   const btn = document.querySelector('#whatsappUsuarioModal button.btn-success');
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>Enviando...'; }
@@ -166,12 +185,12 @@ async function enviarWhatsAppUsuario() {
     const res = await fetch(usuariosBaseUrl + 'usuarios/enviarWhatsApp', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: params });
     const json = await res.json();
     if (json.success) {
-      alert(json.message || 'Mensaje enviado');
+      notify('success', json.message || 'Mensaje enviado');
       bootstrap.Modal.getInstance(document.getElementById('whatsappUsuarioModal'))?.hide();
       document.getElementById('whatsappUsuarioForm')?.reset();
-    } else { alert(json.error || 'No se pudo enviar'); }
+    } else { notify('error', json.error || 'No se pudo enviar'); }
   } catch(e) {
-    alert('Error al enviar');
+    notify('error','Error al enviar');
   } finally {
     if (btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-whatsapp me-1"></i>Enviar'; }
   }

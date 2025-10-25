@@ -76,6 +76,7 @@
                         <tr>
                           <th>Título</th>
                           <th>Asignado a</th>
+                          <th>Teléfono</th>
                           <th>Fecha Límite</th>
                           <th>Prioridad</th>
                           <th>Estado</th>
@@ -115,6 +116,12 @@
                 <div class="mb-3">
                   <label class="form-label">Asignado a <span class="text-danger">*</span></label>
                   <input type="text" class="form-control" id="asignado_a" name="asignado_a" required>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="mb-3">
+                  <label class="form-label">Teléfono <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="telefono_asignado" name="telefono" placeholder="+51" required>
                 </div>
               </div>
               <div class="col-sm-6">
